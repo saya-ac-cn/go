@@ -19,16 +19,16 @@ import (
 *flog 如果为真，则自动去除市名前的+ eg：+北京市
 *     如果为假，则原样输出
 **/
-func filter(selection *goquery.Selection,flog bool) (string) {
+func filter(selection *goquery.Selection, flog bool) string {
 	var result bytes.Buffer
 	selection.Find("td").Each(func(i int, selection *goquery.Selection) {
-		if i == 0{
+		if i == 0 {
 			if flog {
 				result.WriteString(strings.Replace(replace(tools.GbkToUtf8(selection.Text())), "+", "", -1))
-			}else {
+			} else {
 				result.WriteString(replace(tools.GbkToUtf8(selection.Text())))
 			}
-		}else{
+		} else {
 			//fmt.Println("now",replace(tools.GbkToUtf8(selection.Text())))
 			result.WriteString("|")
 			result.WriteString(replace(tools.GbkToUtf8(selection.Text())))
@@ -61,8 +61,8 @@ func pathExists(path string) (bool, error) {
 }
 
 // 打印到文件
-func print(file io.Writer,data string)  {
-	fmt.Print("正在写入：",data)
+func print(file io.Writer, data string) {
+	fmt.Print("正在写入：", data)
 	write := bufio.NewWriter(file)
 	write.WriteString(data)
 	write.Flush()
@@ -73,21 +73,21 @@ func initFile(filePath string) (bool, error) {
 	exist, err := pathExists(filePath)
 	if err != nil {
 		fmt.Printf("获取文件或目录时，发生异常[%v]\n", err)
-		return false ,err
+		return false, err
 	}
 	if !exist {
 		//文件的创建，Create会根据传入的文件名创建文件，默认权限是0666
-		file,err:=os.Create(filePath)
-		if err!=nil{
+		file, err := os.Create(filePath)
+		if err != nil {
 			fmt.Println(err)
 		}
 		file.Close()
 	}
-	return true,nil
+	return true, nil
 }
 
 // 爬去数据省级开始
-func province(url string)  {
+func province(url string) {
 	// 准备文件写入环境
 	filePath := "./reptile/map.txt"
 	_, err := initFile(filePath)
@@ -95,16 +95,16 @@ func province(url string)  {
 		fmt.Printf("初始化文件或目录时，发生异常[%v]\n", err)
 		return
 	}
-	file,err := os.OpenFile(filePath,os.O_WRONLY|os.O_APPEND,0666)
-	if err != nil{
-		fmt.Println("文件打开异常：",err)
+	file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		fmt.Println("文件打开异常：", err)
 		return
 	}
 	// 及时关闭文件
 	defer file.Close()
 
 	doc, err := goquery.NewDocument(url)
-	if err != nil{
+	if err != nil {
 		fmt.Println("发生异常")
 		log.Fatal(err)
 	}
@@ -119,15 +119,15 @@ func province(url string)  {
 			// 依次遍历每个tr
 			if j == 0 {
 				// 表格行首 放空操作
-			}else {
+			} else {
 				// 判断当前文档对象是否为 市级
 				if selection.Is(".shi_nub") {
 					//fmt.Println("子节点数量",selection.Find("td").Length())
-					print(file,filter(selection,true)+"\n")
+					print(file, filter(selection, true)+"\n")
 					//fmt.Println("当前值为：",)
-				}else{
+				} else {
 					// 为县区
-					print(file,filter(selection,false)+"\n")
+					print(file, filter(selection, false)+"\n")
 					//fmt.Println("当前值为：",filter(selection,false))
 				}
 			}
