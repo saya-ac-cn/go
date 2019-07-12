@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	client, err := rpc.DialHTTP("tcp", "127.0.0.1:8095")
+	client, err := rpc.DialHTTP("tcp", "127.0.0.1:2181")
 	if err != nil {
 		log.Fatalln("dailing error: ", err)
 	}

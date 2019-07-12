@@ -37,7 +37,7 @@ func main() {
 	rpc.RegisterName("Arith", new(Arith)) // 注册rpc服务
 	rpc.HandleHTTP()                      // 采用http协议作为rpc载体
 
-	listener, err := net.Listen("tcp", "127.0.0.1:8095")
+	listener, err := net.Listen("tcp", "127.0.0.1:2181")
 	if err != nil {
 		log.Fatalln("ListenTCP error: ", err)
 	}
